@@ -6,28 +6,48 @@ import { RowContent, ROW_FACTOR } from './paint';
 import { getStrokes } from '../lib/data';
 import { readingsOf } from '../lib/pinyin';
 
-/** 100mm 校验尺（1:1 打印校验） */
+/** 100mm 校验尺（1:1 打印校验）。SVG 宽高必须带 mm 单位，否则会被当成 px。 */
 export function Ruler(): JSX.Element {
   return (
     <svg
       data-testid="ruler"
-      width="100"
+      width="100mm"
       height="7mm"
       viewBox="0 0 100 7"
       style={{ display: 'block' }}
-      aria-label="校验尺"
+      aria-label="100mm 校验尺"
     >
-      <rect x={0} y={0} width={100} height={7} fill="#fff" stroke="#999" strokeWidth={0.3} />
-      <line x1={0} y1={6} x2={100} y2={6} stroke="#333" strokeWidth={0.4} />
-      {Array.from({ length: 6 }, (_, i) => {
-        const x = i * 20;
+      <rect x={0.15} y={0.15} width={99.7} height={6.7} fill="#fff" stroke="#999" strokeWidth={0.3} />
+      {/* 每 1mm 一条刻度：10mm 长、5mm 中、其余短 */}
+      {Array.from({ length: 101 }, (_, i) => {
+        const len = i % 10 === 0 ? 2 : i % 5 === 0 ? 1.3 : 0.7;
         return (
-          <g key={i}>
-            <line x1={x} y1={6} x2={x} y2={2} stroke="#333" strokeWidth={0.4} />
-            <text x={x} y={4.8} textAnchor="middle" fontSize={3.4} fontFamily="'Noto Sans SC','PingFang SC',sans-serif" fill="#333">
-              {x}
-            </text>
-          </g>
+          <line
+            key={i}
+            x1={i}
+            y1={6.85}
+            x2={i}
+            y2={6.85 - len}
+            stroke="#333"
+            strokeWidth={i % 10 === 0 ? 0.25 : 0.2}
+          />
+        );
+      })}
+      {Array.from({ length: 11 }, (_, i) => {
+        const mm = i * 10;
+        const x = i === 0 ? 0.8 : i === 10 ? 99.2 : mm;
+        return (
+          <text
+            key={mm}
+            x={x}
+            y={2.7}
+            textAnchor={i === 0 ? 'start' : i === 10 ? 'end' : 'middle'}
+            fontSize={2.6}
+            fontFamily="'Noto Sans SC','PingFang SC',sans-serif"
+            fill="#333"
+          >
+            {mm}
+          </text>
         );
       })}
     </svg>
@@ -109,7 +129,12 @@ export const PageView = memo(function PageView({
             <div className="sheet-title" data-testid="sheet-title">
               {worksheet.title}
             </div>
-            {pi === 0 && <Ruler />}
+            {pi === 0 && (
+              <div className="ruler-row">
+                <Ruler />
+                <span className="ruler-note">打印时请在打印设置中选择「实际大小」，关闭「缩放 / 适应页面」，此尺应为 100mm。</span>
+              </div>
+            )}
           </div>
           <div
             className="sheet-rows"

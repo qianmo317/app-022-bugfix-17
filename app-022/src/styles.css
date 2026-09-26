@@ -104,6 +104,8 @@ textarea { width: 100%; resize: vertical; }
 .sheet { background: #fff; box-shadow: 0 2px 10px rgba(15, 23, 42, 0.18); margin: 0 auto 10px; overflow: hidden; }
 .sheet-header { display: flex; flex-direction: column; gap: 1mm; }
 .sheet-title { font-weight: 700; font-size: 16px; line-height: 1.2; }
+.ruler-row { display: flex; flex-direction: column; gap: 0.5mm; }
+.ruler-note { font-size: 9px; line-height: 1.2; color: #6b7280; }
 .sheet-footer { font-size: 10px; color: #9ca3af; text-align: right; line-height: 1; padding-top: 2mm; }
 .row-svg { display: block; }
 

@@ -10,11 +10,11 @@ export const PAGE = {
   marginRMm: 5,
   marginTMm: 8,
   marginBMm: 8,
-  headerMm: 12,
+  headerMm: 18,
 } as const;
 
 export const usableWMm = PAGE.wMm - PAGE.marginLMm - PAGE.marginRMm; // 200
-export const rowsAreaHMm = PAGE.hMm - PAGE.marginTMm - PAGE.marginBMm - PAGE.headerMm; // 269
+export const rowsAreaHMm = PAGE.hMm - PAGE.marginTMm - PAGE.marginBMm - PAGE.headerMm; // 263
 
 export const TRACE_PRESETS = [
   { label: '浅', value: '#d9d9d9' },

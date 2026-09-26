@@ -70,8 +70,8 @@ type Row = Block[]; type Page = Row[];
 - 部首/结构取自 `src/lib/charinfo.ts` 的 `CHAR_META`（字 → [部首, 结构]，结构取值 `left_right | top_bottom | single | enclosure`），未收录不展示。
 
 ## 8. 关键算法（关键实现点）
-- **A4 页面几何**（`src/lib/layout.ts`）：`PAGE = { wMm: 210, hMm: 297, marginLMm: 5, marginRMm: 5, marginTMm: 8, marginBMm: 8, headerMm: 12 }`，可用宽 `usableWMm = 200`、行区高 `rowsAreaHMm = 269`。
-- **格数与行数上限**：`maxPerLine = floor(200 / cellMm)`（20mm → 10 格）；`maxLines = floor(269 / (cellMm * 1.2 + lineGapMm))`（20mm/2mm → 10 行）。`clampLayout` 把 `cellMm` 夹到 12~35、`lineGapMm` 0~12、`mix` 各项分别夹到 `model 0~1`、`strokeSteps/trace/blank 0~8`。
+- **A4 页面几何**（`src/lib/layout.ts`）：`PAGE = { wMm: 210, hMm: 297, marginLMm: 5, marginRMm: 5, marginTMm: 8, marginBMm: 8, headerMm: 18 }`，可用宽 `usableWMm = 200`、行区高 `rowsAreaHMm = 263`。
+- **格数与行数上限**：`maxPerLine = floor(200 / cellMm)`（20mm → 10 格）；`maxLines = floor(263 / (cellMm * 1.2 + lineGapMm))`（20mm/2mm → 10 行）。`clampLayout` 把 `cellMm` 夹到 12~35、`lineGapMm` 0~12、`mix` 各项分别夹到 `model 0~1`、`strokeSteps/trace/blank 0~8`。
 - **块组合** `buildBlock`：`model` 先入；`strokeSteps > 0 且 strokeCount != null` 时入 `min(strokeSteps, strokeCount)` 个 `step`；**无笔顺数据的汉字（`strokeCount == null && isCjk`）不生成分解格也不生成描红格**（避免误教），只留例字与空格；最后 `slice(0, perLine)` 兜底，保证块不超一行。
 - **贪心分页** `paginate`：逐字取块，若当前行已有内容且 `used + cells.length > perLine` 就换行，再按 `lines` 切页；空内容也返回一页空白字帖。
 - **渲染单位制**（`src/components/paint.tsx`）：`INFO_H = 20`、`ROW_H = 100 + INFO_H = 120`、`ROW_FACTOR = ROW_H / 100 = 1.2`；1 unit = `cellMm/100` mm，即每格 100×100 units + 上方 20 units 信息带。预览、打印、导出共用 `RowContent`，所见即所得。

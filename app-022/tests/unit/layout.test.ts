@@ -33,7 +33,7 @@ describe('版式约束 clampLayout', () => {
     expect(maxPerLine(20)).toBe(10);
   });
 
-  it('默认版式行数 = floor(269 / (20*1.2+2)) = 10', () => {
+  it('默认版式行数 = floor(263 / (20*1.2+2)) = 10', () => {
     expect(maxLines(20, 2)).toBe(10);
   });
 
