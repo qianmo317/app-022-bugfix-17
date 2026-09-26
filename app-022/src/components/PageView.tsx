@@ -6,12 +6,13 @@ import { RowContent, ROW_FACTOR } from './paint';
 import { getStrokes } from '../lib/data';
 import { readingsOf } from '../lib/pinyin';
 
-/** 100mm 校验尺（1:1 打印校验） */
+/** 100mm 校验尺（1:1 打印校验）：每 5mm 短刻度、每 10mm 长刻度并标数字 */
 export function Ruler(): JSX.Element {
+  const ticks = Array.from({ length: 21 }, (_, i) => i * 5);
   return (
     <svg
       data-testid="ruler"
-      width="100"
+      width="100mm"
       height="7mm"
       viewBox="0 0 100 7"
       style={{ display: 'block' }}
@@ -19,14 +20,30 @@ export function Ruler(): JSX.Element {
     >
       <rect x={0} y={0} width={100} height={7} fill="#fff" stroke="#999" strokeWidth={0.3} />
       <line x1={0} y1={6} x2={100} y2={6} stroke="#333" strokeWidth={0.4} />
-      {Array.from({ length: 6 }, (_, i) => {
-        const x = i * 20;
+      {ticks.map((x) => {
+        const major = x % 10 === 0;
         return (
-          <g key={i}>
-            <line x1={x} y1={6} x2={x} y2={2} stroke="#333" strokeWidth={0.4} />
-            <text x={x} y={4.8} textAnchor="middle" fontSize={3.4} fontFamily="'Noto Sans SC','PingFang SC',sans-serif" fill="#333">
-              {x}
-            </text>
+          <g key={x}>
+            <line
+              x1={x}
+              y1={6}
+              x2={x}
+              y2={major ? 3.6 : 4.6}
+              stroke="#333"
+              strokeWidth={major ? 0.4 : 0.25}
+            />
+            {major && (
+              <text
+                x={x === 0 ? 0.6 : x === 100 ? 99.4 : x}
+                y={3}
+                textAnchor={x === 0 ? 'start' : x === 100 ? 'end' : 'middle'}
+                fontSize={2.8}
+                fontFamily="'Noto Sans SC','PingFang SC',sans-serif"
+                fill="#333"
+              >
+                {x}
+              </text>
+            )}
           </g>
         );
       })}
@@ -109,7 +126,12 @@ export const PageView = memo(function PageView({
             <div className="sheet-title" data-testid="sheet-title">
               {worksheet.title}
             </div>
-            {pi === 0 && <Ruler />}
+            {pi === 0 && (
+              <div className="ruler-block">
+                <Ruler />
+                <div className="ruler-caption">打印时请关闭缩放（选「实际大小」），用尺核对 100mm</div>
+              </div>
+            )}
           </div>
           <div
             className="sheet-rows"
